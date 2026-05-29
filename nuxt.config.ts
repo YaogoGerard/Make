@@ -16,6 +16,9 @@ export default defineNuxtConfig({
   components: [
     { path: '~/components', pathPrefix: false },
   ],
+  runtimeConfig: {
+    githubToken: '',
+  },
   i18n: {
     locales: [
       { code: 'fr', language: 'fr-FR', name: 'Français', files: [{ path: 'fr.json', cache: false }] },

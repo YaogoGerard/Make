@@ -73,35 +73,16 @@ const activeFilter = ref('tous')
 const searchQuery = ref('')
 const visibleCount = ref(10)
 
-// ─── DONNÉES MOCK (20 CONTRIBUTEURS) ───
-const allContributors = [
-  { rank: 1, name: 'Yao Gérard', pseudo: '@yaogérard', status: 'contributeur' as const, commits: 1_342, repos: 45, stars: 2_891, avatar: 'https://ui-avatars.com/api/?name=Yao+G%C3%A9rard&background=random' },
-  { rank: 2, name: 'Aminata Ouattara', pseudo: '@aminatao', status: 'étudiant' as const, commits: 987, repos: 23, stars: 1_456, avatar: 'https://ui-avatars.com/api/?name=Aminata+Ouattara&background=random' },
-  { rank: 3, name: 'Issa Traoré', pseudo: '@issatr', status: 'contributeur' as const, commits: 756, repos: 31, stars: 978, avatar: 'https://ui-avatars.com/api/?name=Issa+Traor%C3%A9&background=random' },
-  { rank: 4, name: 'Fatoumata Diallo', pseudo: '@fdiallo', status: 'étudiant' as const, commits: 543, repos: 18, stars: 654, avatar: 'https://ui-avatars.com/api/?name=Fatoumata+Diallo&background=random' },
-  { rank: 5, name: 'Mamadou Koné', pseudo: '@mkoné', status: 'contributeur' as const, commits: 421, repos: 27, stars: 523, avatar: 'https://ui-avatars.com/api/?name=Mamadou+Kon%C3%A9&background=random' },
-  { rank: 6, name: 'Awa Sanou', pseudo: '@awasanou', status: 'étudiant' as const, commits: 312, repos: 12, stars: 378, avatar: 'https://ui-avatars.com/api/?name=Awa+Sanou&background=random' },
-  { rank: 7, name: 'Adama Bamba', pseudo: '@adambamba', status: 'contributeur' as const, commits: 234, repos: 19, stars: 289, avatar: 'https://ui-avatars.com/api/?name=Adama+Bamba&background=random' },
-  { rank: 8, name: 'Rokia Sawadogo', pseudo: '@rokias', status: 'étudiant' as const, commits: 189, repos: 9, stars: 234, avatar: 'https://ui-avatars.com/api/?name=Rokia+Sawadogo&background=random' },
-  { rank: 9, name: 'Boureima Zongo', pseudo: '@bzongo', status: 'contributeur' as const, commits: 145, repos: 14, stars: 178, avatar: 'https://ui-avatars.com/api/?name=Boureima+Zongo&background=random' },
-  { rank: 10, name: 'Kadiatou Ouédraogo', pseudo: '@kadioued', status: 'étudiant' as const, commits: 98, repos: 7, stars: 123, avatar: 'https://ui-avatars.com/api/?name=Kadiatou+Ou%C3%A9draogo&background=random' },
-  { rank: 11, name: 'Souleymane Kaboré', pseudo: '@skabore', status: 'contributeur' as const, commits: 876, repos: 34, stars: 2_134, avatar: 'https://ui-avatars.com/api/?name=Souleymane+Kabor%C3%A9&background=random' },
-  { rank: 12, name: 'Mariam Tapsoba', pseudo: '@mtapsoba', status: 'étudiant' as const, commits: 654, repos: 21, stars: 1_567, avatar: 'https://ui-avatars.com/api/?name=Mariam+Tapsoba&background=random' },
-  { rank: 13, name: 'Drissa Ouédraogo', pseudo: '@drisoued', status: 'contributeur' as const, commits: 567, repos: 28, stars: 1_234, avatar: 'https://ui-avatars.com/api/?name=Drissa+Ou%C3%A9draogo&background=random' },
-  { rank: 14, name: 'Habibata Barro', pseudo: '@hbarro', status: 'étudiant' as const, commits: 432, repos: 15, stars: 876, avatar: 'https://ui-avatars.com/api/?name=Habibata+Barro&background=random' },
-  { rank: 15, name: 'Moustapha Nikiéma', pseudo: '@mnikiem', status: 'contributeur' as const, commits: 378, repos: 22, stars: 745, avatar: 'https://ui-avatars.com/api/?name=Moustapha+Niki%C3%A9ma&background=random' },
-  { rank: 16, name: 'Rahamata Sawadogo', pseudo: '@rahamata', status: 'étudiant' as const, commits: 289, repos: 11, stars: 567, avatar: 'https://ui-avatars.com/api/?name=Rahamata+Sawadogo&background=random' },
-  { rank: 17, name: 'Idrissa Compaoré', pseudo: '@icompaore', status: 'contributeur' as const, commits: 234, repos: 16, stars: 456, avatar: 'https://ui-avatars.com/api/?name=Idrissa+Compaor%C3%A9&background=random' },
-  { rank: 18, name: 'Salimata Drabo', pseudo: '@sdrabo', status: 'étudiant' as const, commits: 187, repos: 8, stars: 345, avatar: 'https://ui-avatars.com/api/?name=Salimata+Drabo&background=random' },
-  { rank: 19, name: 'Ousmane Zoromé', pseudo: '@ozorome', status: 'contributeur' as const, commits: 156, repos: 13, stars: 234, avatar: 'https://ui-avatars.com/api/?name=Ousmane+Zorom%C3%A9&background=random' },
-  { rank: 20, name: 'Bintou Diallo', pseudo: '@bdiallo', status: 'étudiant' as const, commits: 112, repos: 6, stars: 189, avatar: 'https://ui-avatars.com/api/?name=Bintou+Diallo&background=random' },
-]
+// ─── DONNÉES API GITHUB ───
+const { data: apiData } = await useFetch('/api/contributors')
+const allContributors = computed(() => apiData.value ?? [])
+
 
 // ─── LOGIQUE DE FILTRAGE ───
 const filteredList = computed(() => {
   const list = activeFilter.value === 'tous'
-    ? allContributors
-    : allContributors.filter(c => c.status === 'étudiant')
+    ? allContributors.value
+    : allContributors.value.filter(c => c.status === 'étudiant')
   return list.sort((a, b) => b.commits - a.commits).map((c, i) => ({ ...c, rank: i + 1 }))
 })
 
