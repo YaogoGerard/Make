@@ -3,7 +3,8 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/color-mode',
-    "@nuxtjs/tailwindcss"
+    "@nuxtjs/tailwindcss",
+    '@nuxtjs/i18n',
   ],
   css:['~/assets/css/main.css'],
   colorMode: {
@@ -15,4 +16,13 @@ export default defineNuxtConfig({
   components: [
     { path: '~/components', pathPrefix: false },
   ],
+  i18n: {
+    locales: [
+      { code: 'fr', language: 'fr-FR', name: 'Français', files: [{ path: 'fr.json', cache: false }] },
+      { code: 'en', language: 'en-US', name: 'English', files: [{ path: 'en.json', cache: false }] },
+    ],
+    defaultLocale: 'fr',
+    strategy: 'prefix_except_default',
+    langDir: 'locales',
+  },
 })

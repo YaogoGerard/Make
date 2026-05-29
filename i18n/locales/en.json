@@ -1,0 +1,41 @@
+{
+  "hero": {
+    "badge": "Live",
+    "updated": "updated on DD/MM/YY",
+    "title": "Top GitHub contributors from",
+    "country": "Burkina Faso",
+    "subtitle": "An open-source ranking of developers and students who build, commit, and contribute the most on GitHub. Join the movement."
+  },
+  "filter": {
+    "all": "All",
+    "students": "Students"
+  },
+  "search": {
+    "placeholder": "Search a contributor"
+  },
+  "stats": {
+    "contributors": "contributors",
+    "commits_month": "commits this month"
+  },
+  "card": {
+    "student": "student",
+    "contributor": "contributor",
+    "commits": "commits",
+    "repos": "repos",
+    "stars": "stars"
+  },
+  "pagination": {
+    "see_more": "See more",
+    "see_less": "See less"
+  },
+  "header": {
+    "github": "GitHub"
+  },
+  "footer": {
+    "project": "Maké — Open Source Project (MIT License)",
+    "data_via": "Data via",
+    "api": "GitHub API",
+    "handle": "YaogoGerard",
+    "contribute": "Contribute"
+  }
+}

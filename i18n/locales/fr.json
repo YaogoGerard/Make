@@ -1,0 +1,41 @@
+{
+  "hero": {
+    "badge": "Live",
+    "updated": "mise à jour le JJ/MM/AA",
+    "title": "Les meilleurs contributeurs GitHub du",
+    "country": "Burkina Faso",
+    "subtitle": "Un classement open source des développeurs et étudiants qui construisent, commitent et contribuent le plus sur GitHub. Rejoins le mouvement."
+  },
+  "filter": {
+    "all": "Tous",
+    "students": "Étudiants"
+  },
+  "search": {
+    "placeholder": "Rechercher un contributeur"
+  },
+  "stats": {
+    "contributors": "contributeurs",
+    "commits_month": "commits ce mois"
+  },
+  "card": {
+    "student": "étudiant",
+    "contributor": "contributeur",
+    "commits": "commits",
+    "repos": "repos",
+    "stars": "étoiles"
+  },
+  "pagination": {
+    "see_more": "Voir plus",
+    "see_less": "Voir moins"
+  },
+  "header": {
+    "github": "GitHub"
+  },
+  "footer": {
+    "project": "Maké — Projet Open Source (Licence MIT)",
+    "data_via": "Données via",
+    "api": "API GitHub",
+    "handle": "YaogoGerard",
+    "contribute": "Contribuer"
+  }
+}

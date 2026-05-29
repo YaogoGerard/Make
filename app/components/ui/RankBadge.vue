@@ -1,7 +1,8 @@
 <template>
+  <!-- ═══ BADGE "LIVE" AVEC PULSATION (glow uniquement, pas d'opacité) ═══ -->
   <span class="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1.5 text-sm text-orange-600 dark:text-orange-400 animate-glow-pulse">
     <span class="h-2 w-2 rounded-full bg-orange-500 shadow-[0_0_6px_rgba(249,115,22,0.6)]" />
-    Live
+    {{ $t('hero.badge') }}
   </span>
 </template>
 
