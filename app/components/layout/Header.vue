@@ -1,12 +1,9 @@
 <template>
-  <!-- ─── BARRE HEADER (conteneur invisible, chaque element est une goutte) ─── -->
   <header class="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-4 py-3 sm:px-8">
-    <!-- ═══ GOUTTE LOGO ═══ -->
     <NuxtLink to="/" class="shrink-0 rounded-full bg-gray-400/20 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-100 dark:bg-gray-800/20 dark:border-gray-700 p-2">
       <img class="h-8 w-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] dark:drop-shadow-none" src="~/assets/images/logo1.png" alt="Maké logo">
     </NuxtLink>
 
-    <!-- ═══ GOUTTES NAV DESKTOP ═══ -->
     <nav class="hidden items-center gap-3 md:flex">
       <span class="rounded-full bg-gray-400/20 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-100 dark:bg-gray-800/20 dark:border-gray-700 px-4 py-2">
         <button class="text-sm text-gray-600 transition hover:text-gray-900 dark:text-white/70 dark:hover:text-white">FR</button>
@@ -35,7 +32,6 @@
       </span>
     </nav>
 
-    <!-- ═══ GOUTTE HAMBURGER MOBILE ═══ -->
     <span class="rounded-full bg-gray-400/20 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-100 dark:bg-gray-800/20 dark:border-gray-700 p-3 md:hidden">
       <button
         class="flex flex-col gap-1.5"
@@ -48,7 +44,6 @@
       </button>
     </span>
 
-    <!-- ═══ MENU MOBILE ═══ -->
     <div
       v-if="menuOpen"
       class="absolute inset-x-0 top-full mt-3"

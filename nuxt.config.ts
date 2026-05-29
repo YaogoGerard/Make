@@ -12,4 +12,7 @@ export default defineNuxtConfig({
     fallback: 'dark',
     storageKey: 'maké-theme',
   },
+  components: [
+    { path: '~/components', pathPrefix: false },
+  ],
 })
