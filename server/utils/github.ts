@@ -26,8 +26,11 @@ interface GithubUser {
   }
 }
 
+const YEAR = new Date().getFullYear()
+
 // La requette qui sera envoyé à l'api graphql de github
-const QUERY = `
+function buildQuery(from: string): string {
+  return `
 query {
   search(type: USER, query: "location:Burkina Faso sort:followers-desc", first: 100) {
     edges {
@@ -43,7 +46,7 @@ query {
             totalCount
             nodes { stargazerCount }
           }
-          contributionsCollection {
+          contributionsCollection(from: "${from}") {
             contributionCalendar { totalContributions }
             totalCommitContributions
           }
@@ -52,7 +55,7 @@ query {
     }
   }
 }
-`
+`}
 
 //detection des profiles etudiant via leur bio github
 function isStudent(bio: string | null, company: string | null): boolean {
@@ -87,6 +90,7 @@ export interface Contributor {
 //Fonction principale , classement et trie 
 export async function fetchGithubContributors(): Promise<Contributor[]> {
   const { githubToken } = useRuntimeConfig()
+  const from = `${YEAR}-01-01T00:00:00Z`
 
   const res = await fetch(GITHUB_GRAPHQL, {
     method: 'POST',
@@ -94,7 +98,7 @@ export async function fetchGithubContributors(): Promise<Contributor[]> {
       'Authorization': `Bearer ${githubToken}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ query: QUERY }),
+    body: JSON.stringify({ query: buildQuery(from) }),
   })
 
   const json = await res.json()
