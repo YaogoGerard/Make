@@ -5,7 +5,7 @@ import path from "node:path";
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
 const BATCH_SIZE = 10;
-const BATCH_DELAY = 200;
+const BATCH_DELAY = 1200;
 
 const STUDENT_KEYWORDS = [
   "étudiant", "étudiante", "etudiant", "etudiante", "student",
@@ -78,28 +78,37 @@ async function fetchRankedLogins() {
   return logins;
 }
 
-async function fetchBatch(logins, from, token) {
-  const res = await fetch(GITHUB_GRAPHQL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ query: buildBatchQuery(logins, from) }),
-  });
+async function fetchBatch(logins, from, token, retries = 3) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    const res = await fetch(GITHUB_GRAPHQL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query: buildBatchQuery(logins, from) }),
+    });
 
-  const json = await res.json();
+    const json = await res.json();
 
-  if (!json.data) {
-    throw new Error(`Réponse GitHub vide : ${JSON.stringify(json)}`);
+    if (json.data) {
+      return logins
+        .map((_, i) => json.data[`u${i}`])
+        .filter(
+          (u) =>
+            u && u.login && u.contributionsCollection?.contributionCalendar,
+        );
+    }
+
+    const isRateLimit = json.message?.toLowerCase().includes("rate limit");
+    if (!isRateLimit || attempt === retries) {
+      throw new Error(`Réponse GitHub vide : ${JSON.stringify(json)}`);
+    }
+
+    const wait = attempt * 30_000;
+    console.log(`[generate] rate limit atteint, tentative ${attempt}/${retries}, attente ${wait / 1000}s...`);
+    await delay(wait);
   }
-
-  return logins
-    .map((_, i) => json.data[`u${i}`])
-    .filter(
-      (u) =>
-        u && u.login && u.contributionsCollection?.contributionCalendar,
-    );
 }
 
 async function main() {
