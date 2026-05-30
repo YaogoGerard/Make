@@ -1,6 +1,6 @@
 <template>
-  <!-- ═══ CARTE D'UN CONTRIBUTEUR ═══ -->
-  <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+  <!-- ═══ CARTE D'UN CONTRIBUTEUR (cliquable → GitHub) ═══ -->
+  <a :href="githubUrl" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
     <div class="flex items-start gap-4">
       <!-- AVATAR + BADGE DE RANG -->
       <div class="relative shrink-0">
@@ -54,11 +54,11 @@
         <p class="text-xs text-gray-500 dark:text-gray-400">{{ $t('card.stars') }}</p>
       </div>
     </div>
-  </div>
+  </a>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   rank: number
   name: string
   pseudo: string
@@ -68,6 +68,8 @@ defineProps<{
   stars: number
   avatar?: string
 }>()
+
+const githubUrl = `https://github.com/${props.pseudo.slice(1)}`
 
 function formatNumber(n: number): string {
   return n.toLocaleString('fr-FR')
