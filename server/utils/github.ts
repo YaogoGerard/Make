@@ -1,4 +1,4 @@
-import https from "node:https";
+
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
@@ -90,20 +90,11 @@ function delay(ms: number): Promise<void> {
 
 let fetchPromise: Promise<Contributor[]> | null = null;
 
-function httpsGet(url: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const parsed = new URL(url);
-    https.get({ hostname: parsed.hostname, path: parsed.pathname, family: 4 }, (res) => {
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => resolve(data));
-    }).on("error", reject);
-  });
-}
-
 async function fetchRankedLogins(): Promise<string[]> {
   try {
-    const body = await httpsGet(COMMITTERS_TOP_URL);
+    const res = await fetch(COMMITTERS_TOP_URL);
+    if (!res.ok) throw new Error(`committers.top : ${res.status}`);
+    const body = await res.text();
     const json = JSON.parse(body);
     const logins: string[] = json.user ?? [];
     console.log(

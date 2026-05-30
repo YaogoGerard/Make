@@ -1,12 +1,15 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
+  app: {
+    baseURL: '/Make/',
+  },
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/color-mode',
     "@nuxtjs/tailwindcss",
     '@nuxtjs/i18n',
   ],
-  css:['~/assets/css/main.css'],
+
   colorMode: {
     classSuffix: '',
     preference: 'system',
