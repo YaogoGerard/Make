@@ -7,7 +7,7 @@ Maké est un site statique généré avec **Nuxt 4** qui affiche un classement d
 ## Stack
 
 - **Framework** — Nuxt 4 (SSG)
-- **UI** — Tailwind CSS, Nuxt Color Mode (dark/light)
+- **UI** — Tailwind CSS, Nuxt Color Mode (dark/light), glassmorphism (verre dépoli)
 - **i18n** — Français / Anglais
 - **Données** — GitHub GraphQL API + [committers.top](https://committers.top/burkina_faso)
 - **Cache** — 24h via Nitro storage
@@ -53,6 +53,10 @@ npm run preview
 - `.github/workflows/deploy.yml` — Déploiement automatique
 - `i18n/locales/` — Fichiers de traduction (fr/en)
 - `app/pages/index.vue` — Page principale (classement, filtres, recherche)
+
+## Contribuer
+
+Les contributions sont les bienvenues ! Voir [`CONTRIBUTING.md`](CONTRIBUTING.md) pour les détails.
 
 ## Licence
 
