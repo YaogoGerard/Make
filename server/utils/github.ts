@@ -1,13 +1,9 @@
 const GITHUB_GRAPHQL = 'https://api.github.com/graphql'
-
-
-//les mots de clé de detection des profiles etudiants
+const MAX_PAGES = 5
 
 const STUDENT_KEYWORDS = [
-  'étudiant', 'étudiante', 'etudiant', 'etudiante','student'
+  'étudiant', 'étudiante', 'etudiant', 'etudiante', 'student'
 ]
-
-//typage des donnés qui seront recu
 
 interface GithubUser {
   login: string
@@ -26,13 +22,23 @@ interface GithubUser {
   }
 }
 
+interface PageInfo {
+  hasNextPage: boolean
+  endCursor: string | null
+}
+
+interface SearchResult {
+  edges: { node: GithubUser }[]
+  pageInfo: PageInfo
+}
+
 const YEAR = new Date().getFullYear()
 
-// La requette qui sera envoyé à l'api graphql de github
 function buildQuery(from: string): string {
   return `
-query {
-  search(type: USER, query: "location:Burkina Faso repos:>0 sort:followers-desc", first: 100) {
+query($after: String) {
+  search(type: USER, query: "location:Burkina Faso repos:>=5 followers:>=3", first: 100, after: $after) {
+    pageInfo { hasNextPage endCursor }
     edges {
       node {
         ... on User {
@@ -57,24 +63,19 @@ query {
 }
 `}
 
-//detection des profiles etudiant via leur bio github
 function isStudent(bio: string | null, company: string | null): boolean {
   const text = `${bio ?? ''} ${company ?? ''}`.toLowerCase()
   return STUDENT_KEYWORDS.some(k => text.includes(k))
 }
 
-//calcul du totale des etoiles de chacun à partir de ses repos
 function totalStars(repos: { stargazerCount: number }[]): number {
   return repos.reduce((sum, r) => sum + r.stargazerCount, 0)
 }
 
-//netoyagge du nom recu
 function cleanName(raw: string | null, login: string): string {
   if (!raw) return login
   return raw.trim()
 }
-
-//typage des donné qui seront renvoyer au frontend
 
 export interface Contributor {
   rank: number
@@ -87,18 +88,17 @@ export interface Contributor {
   avatar: string
 }
 
-//Fonction principale , classement et trie 
-export async function fetchGithubContributors(): Promise<Contributor[]> {
-  const { githubToken } = useRuntimeConfig()
-  const from = `${YEAR}-01-01T00:00:00Z`
-
+async function fetchPage(from: string, after: string | null, token: string): Promise<SearchResult> {
   const res = await fetch(GITHUB_GRAPHQL, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${githubToken}`,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ query: buildQuery(from) }),
+    body: JSON.stringify({
+      query: buildQuery(from),
+      variables: { after },
+    }),
   })
 
   const json = await res.json()
@@ -107,17 +107,32 @@ export async function fetchGithubContributors(): Promise<Contributor[]> {
     throw new Error(`GitHub API error: ${JSON.stringify(json.errors)}`)
   }
 
-  const edges = json.data.search.edges as { node: GithubUser }[]
-  const users = edges.map(e => e.node)
+  return json.data.search as SearchResult
+}
 
-  // Trier par contributions totales (descendant)
-  users.sort((a, b) => {
+export async function fetchGithubContributors(): Promise<Contributor[]> {
+  const { githubToken } = useRuntimeConfig()
+  const from = `${YEAR}-01-01T00:00:00Z`
+
+  let after: string | null = null
+  const allUsers: GithubUser[] = []
+
+  for (let i = 0; i < MAX_PAGES; i++) {
+    const result = await fetchPage(from, after, githubToken)
+    const users = result.edges.map(e => e.node)
+    allUsers.push(...users)
+
+    if (!result.pageInfo.hasNextPage || !result.pageInfo.endCursor) break
+    after = result.pageInfo.endCursor
+  }
+
+  allUsers.sort((a, b) => {
     const aContribs = a.contributionsCollection?.contributionCalendar?.totalContributions ?? 0
     const bContribs = b.contributionsCollection?.contributionCalendar?.totalContributions ?? 0
     return bContribs - aContribs
   })
 
-  return users.map((user, index) => ({
+  return allUsers.map((user, index) => ({
     rank: index + 1,
     name: cleanName(user.name, user.login),
     pseudo: `@${user.login}`,
