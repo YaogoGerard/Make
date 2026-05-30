@@ -3,7 +3,7 @@
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
 const BATCH_SIZE = 10;
-const BATCH_DELAY = 200;
+const BATCH_DELAY = 1000;
 
 const STUDENT_KEYWORDS = [
   "étudiant",
@@ -110,36 +110,49 @@ async function fetchBatch(
   logins: string[],
   from: string,
   token: string,
+  retries = 3,
 ): Promise<GithubUser[]> {
-  let res: Response;
-  try {
-    res = await fetch(GITHUB_GRAPHQL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query: buildBatchQuery(logins, from) }),
-    });
-  } catch (err) {
-    throw new Error(`Réseau inaccessible : ${err}`);
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const res = await fetch(GITHUB_GRAPHQL, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: buildBatchQuery(logins, from) }),
+      });
+
+      const json = await res.json();
+
+      if (!json.data) {
+        if (res.status === 403 || res.status === 429) {
+          const wait = (attempt + 1) * 10000;
+          console.log(`[github] rate limit, attente ${wait}ms (tentative ${attempt + 1}/${retries})`);
+          await delay(wait);
+          continue;
+        }
+        throw new Error(`Réponse GitHub vide : ${JSON.stringify(json)}`);
+      }
+
+      return logins
+        .map((_, i) => json.data[`u${i}`] as GithubUser | null)
+        .filter(
+          (u): u is GithubUser =>
+            !!u &&
+            !!u.login &&
+            !!u.contributionsCollection &&
+            !!u.contributionsCollection.contributionCalendar,
+        );
+    } catch (err) {
+      if (attempt === retries - 1) throw err;
+      const wait = (attempt + 1) * 5000;
+      console.log(`[github] erreur, attente ${wait}ms (tentative ${attempt + 1}/${retries})`);
+      await delay(wait);
+    }
   }
 
-  const json = await res.json();
-
-  if (!json.data) {
-    throw new Error(`Réponse GitHub vide : ${JSON.stringify(json)}`);
-  }
-
-  return logins
-    .map((_, i) => json.data[`u${i}`] as GithubUser | null)
-    .filter(
-      (u): u is GithubUser =>
-        !!u &&
-        !!u.login &&
-        !!u.contributionsCollection &&
-        !!u.contributionsCollection.contributionCalendar,
-    );
+  return [];
 }
 
 export async function fetchGithubContributors(): Promise<Contributor[]> {
