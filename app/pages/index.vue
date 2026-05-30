@@ -42,7 +42,7 @@
     </p>
     <!-- GRILLE DES CARTES CONTRIBUTEURS -->
     <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-      <ContributorCard v-for="c in displayedList" :key="c.rank"
+      <ContributorCard v-for="c in displayedList" :key="c.pseudo"
         :rank="c.rank" :name="c.name" :pseudo="c.pseudo" :status="c.status"
         :contributions="c.contributions" :repos="c.repos" :stars="c.stars" :avatar="c.avatar"
       />
@@ -89,7 +89,7 @@ const filteredList = computed(() => {
     ? list.filter(c => c.name.toLowerCase().includes(query) || c.pseudo.toLowerCase().includes(query))
     : list
 
-  return [...filtered].sort((a, b) => b.contributions - a.contributions).map((c, i) => ({ ...c, rank: i + 1 }))
+  return [...filtered]
 })
 
 // ─── AFFICHAGE LIMITÉ À visibleCount ───
