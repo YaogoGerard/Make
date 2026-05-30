@@ -60,4 +60,4 @@ Les contributions sont les bienvenues ! Voir [`CONTRIBUTING.md`](CONTRIBUTING.md
 
 ## Licence
 
-Pojet sous Licence MIT
+Pojet sous [Licence MIT](LICENSE)
