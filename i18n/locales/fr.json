@@ -35,7 +35,7 @@
     "title": "Comment fonctionne le classement ?",
     "criteria": "Le classement est basé sur le nombre total de contributions GitHub (commits + pull requests + reviews de code) de l'année en cours. Seules les contributions publiques sont comptabilisées.",
     "source": "Les données proviennent de",
-    "student_howto": "Pour apparaître avec le badge étudiant (vert), ajoutez « étudiant », « étudiante » ou « student » dans votre bio ou votre entreprise sur GitHub."
+    "student_howto": "Pour apparaître avec le badge étudiant (vert), ajoutez « étudiant », « étudiante » ou « student » dans votre bio GitHub. Les données de committers.top sont mises à jour toutes les 24h."
   },
   "footer": {
     "project": "Maké — Projet Open Source (Licence MIT)",
