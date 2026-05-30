@@ -175,12 +175,12 @@ export async function fetchGithubContributors(): Promise<Contributor[]> {
         );
       }
 
-      // étape 3 : tri par commits uniquement (meilleur indicateur open source)
+      // étape 3 : tri par contributions totales (commits + PRs + reviews = activité open source)
       allUsers.sort((a, b) => {
         const aC =
-          a.contributionsCollection?.totalCommitContributions ?? 0;
+          a.contributionsCollection?.contributionCalendar?.totalContributions ?? 0;
         const bC =
-          b.contributionsCollection?.totalCommitContributions ?? 0;
+          b.contributionsCollection?.contributionCalendar?.totalContributions ?? 0;
         return bC - aC;
       });
 
