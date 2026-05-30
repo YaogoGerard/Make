@@ -2,8 +2,8 @@ import https from "node:https";
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
-const BATCH_SIZE = 50;
-const BATCH_DELAY = 300;
+const BATCH_SIZE = 10;
+const BATCH_DELAY = 200;
 
 const STUDENT_KEYWORDS = [
   "étudiant",
