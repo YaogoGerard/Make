@@ -1,3 +1,5 @@
+import https from "node:https";
+
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
 const BATCH_SIZE = 10;
@@ -81,10 +83,20 @@ function cleanName(raw: string | null, login: string): string {
   return raw.trim();
 }
 
+function httpsGet(url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+      let data = "";
+      res.on("data", (chunk) => (data += chunk));
+      res.on("end", () => resolve(data));
+    }).on("error", reject);
+  });
+}
+
 async function fetchRankedLogins(): Promise<string[]> {
   try {
-    const res = await fetch(COMMITTERS_TOP_URL);
-    const json = await res.json();
+    const body = await httpsGet(COMMITTERS_TOP_URL);
+    const json = JSON.parse(body);
     const logins: string[] = json.user ?? [];
     console.log(
       `[github] ${logins.length} logins récupérés depuis committers.top`,
