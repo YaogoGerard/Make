@@ -83,7 +83,13 @@ const filteredList = computed(() => {
   const list = activeFilter.value === 'tous'
     ? allContributors.value
     : allContributors.value.filter(c => c.status === 'étudiant')
-  return list.sort((a, b) => b.contributions - a.contributions).map((c, i) => ({ ...c, rank: i + 1 }))
+
+  const query = searchQuery.value.toLowerCase().trim()
+  const filtered = query
+    ? list.filter(c => c.name.toLowerCase().includes(query) || c.pseudo.toLowerCase().includes(query))
+    : list
+
+  return [...filtered].sort((a, b) => b.contributions - a.contributions).map((c, i) => ({ ...c, rank: i + 1 }))
 })
 
 // ─── AFFICHAGE LIMITÉ À visibleCount ───
