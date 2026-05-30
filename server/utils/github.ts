@@ -37,7 +37,7 @@ const YEAR = new Date().getFullYear()
 function buildQuery(from: string): string {
   return `
 query($after: String) {
-  search(type: USER, query: "location:Burkina Faso repos:>=5 followers:>=3", first: 100, after: $after) {
+  search(type: USER, query: "location:Burkina Faso repos:>=1 followers:>=1", first: 100, after: $after) {
     pageInfo { hasNextPage endCursor }
     edges {
       node {
