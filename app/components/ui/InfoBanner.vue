@@ -15,7 +15,7 @@
         <p>{{ $t('info.criteria') }}</p>
         <p>
           {{ $t('info.source') }}
-          <a href="https://committers.top/burkina_faso" target="_blank" rel="noopener noreferrer" class="font-medium text-orange-500 underline underline-offset-2">committers.top</a>.
+          <a href="https://committers.top/burkina_faso" target="_blank" rel="noopener noreferrer" class="font-medium text-orange-500 underline underline-offset-2">committers.top</a>{{ $t('info.source_updated') }}
         </p>
         <p>{{ $t('info.student_howto') }}</p>
       </div>
