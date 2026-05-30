@@ -1,6 +1,9 @@
 # Architecture — Maké
 
-> C4 Context + Container, ADR, stack.
+> C4 Context + Container, ADR, stack.  
+> 📖 Recommandé avant toute autre lecture.
+
+**[→ Lire : Pipeline de données](data-pipeline.md)**
 
 ## Contexte (C4 Level 1)
 

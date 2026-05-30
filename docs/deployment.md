@@ -2,6 +2,8 @@
 
 > CI/CD GitHub Actions → GitHub Pages.
 
+**[← Configuration](configuration.md)** • **[↻ Architecture](architecture.md)**
+
 ```mermaid
 flowchart LR
   Push[Push main] --> Actions

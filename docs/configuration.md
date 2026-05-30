@@ -2,6 +2,8 @@
 
 > Fichiers de configuration du projet.
 
+**[← Composants](components.md)** • **[→ Déploiement](deployment.md)**
+
 ## `nuxt.config.ts`
 
 | Section | Rôle |

@@ -2,6 +2,8 @@
 
 > De l'API GitHub à l'affichage navigateur, en 5 étapes.
 
+**[← Architecture](architecture.md)** • **[→ API](api-contributors.md)**
+
 ```mermaid
 flowchart LR
   A[committers.top] -->|Logins| B[GraphQL batch 10]

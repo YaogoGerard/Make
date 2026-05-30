@@ -2,6 +2,8 @@
 
 > Composants Vue du projet.
 
+**[← API](api-contributors.md)** • **[→ Configuration](configuration.md)**
+
 ## Layout
 
 | Composant | Éléments |

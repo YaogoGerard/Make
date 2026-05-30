@@ -2,6 +2,8 @@
 
 > Endpoint unique, disponible pendant la génération SSG uniquement.
 
+**[← Pipeline de données](data-pipeline.md)** • **[→ Composants](components.md)**
+
 ```
 GET /api/contributors
 ```

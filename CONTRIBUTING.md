@@ -18,6 +18,10 @@ Ouvre une [issue](https://github.com/YaogoGerard/Make/issues) avec :
 5. **Commit** avec un message clair (ex: `fix: rate limit retry on 429`)
 6. **Push** et **ouvre une Pull Request** vers `main`
 
+## Documentation
+
+Avant de contribuer, consulte **[`docs/architecture.md`](docs/architecture.md)** pour comprendre l'architecture du projet. L'ensemble des docs est dans [`docs/`](docs/).
+
 ## Conventions
 
 - Le code suit le style existant ( TypeScript, composition API)
