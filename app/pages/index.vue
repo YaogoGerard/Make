@@ -7,7 +7,7 @@
         <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m6-2a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z" />
         </svg>
-        {{ $t('hero.updated') }}
+        {{ $t('hero.updated') }} {{ new Date().toLocaleDateString('fr-FR') }}
       </span>
     </div>
 
