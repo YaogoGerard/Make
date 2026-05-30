@@ -33,7 +33,9 @@
         <!-- BOUTON CONTRIBUER (plein, pas en verre) -->
         <span class="rounded-full bg-white/60 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-200/50 dark:bg-gray-800/20 dark:border-gray-700">
           <a
-            href="#"
+            href="https://github.com/YaogoGerard/Make/tree/main?tab=contributing-ov-file"
+            target="_blank"
+            rel="noopener noreferrer"
             class="inline-block rounded-full bg-gray-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200"
           >
             {{ $t('footer.contribute') }}
