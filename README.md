@@ -1,5 +1,7 @@
 # Maké
 
+![app/assets/images/logo1.png](app/assets/images/logo1.png)
+
 > Classement des meilleurs contributeurs GitHub du Burkina Faso.
 
 Maké est un site statique généré avec **Nuxt 4** qui affiche un classement des développeurs et étudiants burkinabè les plus actifs sur GitHub, basé sur leurs contributions publiques (commits, pull requests, code reviews) de l'année en cours.
