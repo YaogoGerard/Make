@@ -32,7 +32,7 @@ const YEAR = new Date().getFullYear()
 function buildQuery(from: string): string {
   return `
 query {
-  search(type: USER, query: "location:Burkina Faso sort:followers-desc", first: 100) {
+  search(type: USER, query: "location:Burkina Faso repos:>0 sort:followers-desc", first: 100) {
     edges {
       node {
         ... on User {
