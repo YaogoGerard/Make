@@ -38,13 +38,13 @@
     <!-- STATISTIQUES (nombre de contributeurs + commits) -->
     <p class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
       <span class="font-medium text-orange-500">{{ filteredList.length }}</span> {{ $t('stats.contributors') }} •
-      <span class="font-medium text-orange-500">{{ totalCommits }}</span> {{ $t('stats.commits_month') }}
+      <span class="font-medium text-orange-500">{{ totalContribs }}</span> {{ $t('stats.contributions_year') }}
     </p>
     <!-- GRILLE DES CARTES CONTRIBUTEURS -->
     <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
       <ContributorCard v-for="c in displayedList" :key="c.rank"
         :rank="c.rank" :name="c.name" :pseudo="c.pseudo" :status="c.status"
-        :commits="c.commits" :repos="c.repos" :stars="c.stars" :avatar="c.avatar"
+        :contributions="c.contributions" :repos="c.repos" :stars="c.stars" :avatar="c.avatar"
       />
     </div>
     <!-- BOUTONS VOIR PLUS / VOIR MOINS -->
@@ -83,7 +83,7 @@ const filteredList = computed(() => {
   const list = activeFilter.value === 'tous'
     ? allContributors.value
     : allContributors.value.filter(c => c.status === 'étudiant')
-  return list.sort((a, b) => b.commits - a.commits).map((c, i) => ({ ...c, rank: i + 1 }))
+  return list.sort((a, b) => b.contributions - a.contributions).map((c, i) => ({ ...c, rank: i + 1 }))
 })
 
 // ─── AFFICHAGE LIMITÉ À visibleCount ───
@@ -91,9 +91,9 @@ const displayedList = computed(() =>
   filteredList.value.slice(0, visibleCount.value)
 )
 
-// ─── TOTAL DES COMMITS (pour les stats) ───
-const totalCommits = computed(() =>
-  filteredList.value.reduce((sum, c) => sum + c.commits, 0)
+// ─── TOTAL DES CONTRIBUTIONS (pour les stats) ───
+const totalContribs = computed(() =>
+  filteredList.value.reduce((sum, c) => sum + c.contributions, 0)
 )
 
 // ─── RÉINITIALISATION DU NOMBRE VISIBLE AU CHANGEMENT DE FILTRE ───

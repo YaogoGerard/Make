@@ -82,7 +82,7 @@ export interface Contributor {
   name: string
   pseudo: string
   status: 'contributeur' | 'étudiant'
-  commits: number
+  contributions: number
   repos: number
   stars: number
   avatar: string
@@ -137,7 +137,7 @@ export async function fetchGithubContributors(): Promise<Contributor[]> {
     name: cleanName(user.name, user.login),
     pseudo: `@${user.login}`,
     status: isStudent(user.bio, user.company) ? 'étudiant' : 'contributeur',
-    commits: user.contributionsCollection?.totalCommitContributions ?? 0,
+    contributions: user.contributionsCollection?.contributionCalendar?.totalContributions ?? 0,
     repos: user.repositories?.totalCount ?? 0,
     stars: totalStars(user.repositories?.nodes ?? []),
     avatar: user.avatarUrl,

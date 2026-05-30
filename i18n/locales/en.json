@@ -15,12 +15,12 @@
   },
   "stats": {
     "contributors": "contributors",
-    "commits_month": "commits this month"
+    "contributions_year": "contributions this year"
   },
   "card": {
     "student": "student",
     "contributor": "contributor",
-    "commits": "commits",
+    "contributions": "contributions",
     "repos": "repos",
     "stars": "stars"
   },

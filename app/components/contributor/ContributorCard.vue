@@ -42,8 +42,8 @@
     <!-- STATISTIQUES (commits / repos / étoiles) -->
     <div class="mt-4 grid grid-cols-3 gap-2 border-t border-gray-100 pt-4 dark:border-gray-800">
       <div class="text-center">
-        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ formatNumber(commits) }}</p>
-        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $t('card.commits') }}</p>
+        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ formatNumber(contributions) }}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $t('card.contributions') }}</p>
       </div>
       <div class="text-center">
         <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ repos }}</p>
@@ -63,7 +63,7 @@ defineProps<{
   name: string
   pseudo: string
   status: 'contributeur' | 'étudiant'
-  commits: number
+  contributions: number
   repos: number
   stars: number
   avatar?: string
