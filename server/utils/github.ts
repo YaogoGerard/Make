@@ -1,9 +1,6 @@
-import https from "node:https";
-
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
-const BATCH_SIZE = 30;
-const CONCURRENCY = 3;
+const BATCH_SIZE = 10;
 
 const STUDENT_KEYWORDS = [
   "étudiant",
@@ -75,8 +72,8 @@ function isStudent(bio: string | null, company: string | null): boolean {
   return STUDENT_KEYWORDS.some((k) => text.includes(k));
 }
 
-function totalStars(repos: ({ stargazerCount: number } | null)[]): number {
-  return repos.reduce((sum, r) => sum + (r?.stargazerCount ?? 0), 0);
+function totalStars(repos: { stargazerCount: number }[]): number {
+  return repos.reduce((sum, r) => sum + r.stargazerCount, 0);
 }
 
 function cleanName(raw: string | null, login: string): string {
@@ -84,20 +81,10 @@ function cleanName(raw: string | null, login: string): string {
   return raw.trim();
 }
 
-function httpsGet(url: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => resolve(data));
-    }).on("error", reject);
-  });
-}
-
 async function fetchRankedLogins(): Promise<string[]> {
   try {
-    const body = await httpsGet(COMMITTERS_TOP_URL);
-    const json = JSON.parse(body);
+    const res = await fetch(COMMITTERS_TOP_URL);
+    const json = await res.json();
     const logins: string[] = json.user ?? [];
     console.log(
       `[github] ${logins.length} logins récupérés depuis committers.top`,
@@ -151,34 +138,24 @@ export async function fetchGithubContributors(): Promise<Contributor[]> {
   // étape 1 : liste des logins depuis committers.top
   const rankedLogins = await fetchRankedLogins();
 
-  // étape 2 : enrichissement par batch (BATCH_SIZE) via GitHub GraphQL
-  // les batchs sont parallélisés par paquets de CONCURRENCY
+  // étape 2 : enrichissement par batch de 10 via GitHub GraphQL
   const allUsers: GithubUser[] = [];
-  const batches: string[][] = [];
 
   for (let i = 0; i < rankedLogins.length; i += BATCH_SIZE) {
-    batches.push(rankedLogins.slice(i, i + BATCH_SIZE));
-  }
-
-  for (let i = 0; i < batches.length; i += CONCURRENCY) {
-    const chunk = batches.slice(i, i + CONCURRENCY);
-    const results = await Promise.all(
-      chunk.map((batch) => fetchBatch(batch, from, githubToken)),
-    );
-    for (const users of results) {
-      allUsers.push(...users);
-    }
+    const batch = rankedLogins.slice(i, i + BATCH_SIZE);
+    const users = await fetchBatch(batch, from, githubToken);
+    allUsers.push(...users);
     console.log(
-      `[github] paquet ${Math.floor(i / CONCURRENCY) + 1} : ${allUsers.length} / ${rankedLogins.length} enrichis`,
+      `[github] batch ${Math.floor(i / BATCH_SIZE) + 1} : ${users.length}/${batch.length} enrichis | total: ${allUsers.length}`,
     );
   }
 
-  // étape 3 : tri par contributions GitHub en temps réel (pas par classement committers.top)
+  // étape 3 : tri par commits uniquement (meilleur indicateur open source)
   allUsers.sort((a, b) => {
     const aC =
-      a.contributionsCollection?.contributionCalendar?.totalContributions ?? 0;
+      a.contributionsCollection?.totalCommitContributions ?? 0;
     const bC =
-      b.contributionsCollection?.contributionCalendar?.totalContributions ?? 0;
+      b.contributionsCollection?.totalCommitContributions ?? 0;
     return bC - aC;
   });
 
