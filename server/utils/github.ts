@@ -2,7 +2,8 @@ import https from "node:https";
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 30;
+const CONCURRENCY = 3;
 
 const STUDENT_KEYWORDS = [
   "étudiant",
@@ -150,15 +151,25 @@ export async function fetchGithubContributors(): Promise<Contributor[]> {
   // étape 1 : liste des logins depuis committers.top
   const rankedLogins = await fetchRankedLogins();
 
-  // étape 2 : enrichissement par batch de 10 via GitHub GraphQL
+  // étape 2 : enrichissement par batch (BATCH_SIZE) via GitHub GraphQL
+  // les batchs sont parallélisés par paquets de CONCURRENCY
   const allUsers: GithubUser[] = [];
+  const batches: string[][] = [];
 
   for (let i = 0; i < rankedLogins.length; i += BATCH_SIZE) {
-    const batch = rankedLogins.slice(i, i + BATCH_SIZE);
-    const users = await fetchBatch(batch, from, githubToken);
-    allUsers.push(...users);
+    batches.push(rankedLogins.slice(i, i + BATCH_SIZE));
+  }
+
+  for (let i = 0; i < batches.length; i += CONCURRENCY) {
+    const chunk = batches.slice(i, i + CONCURRENCY);
+    const results = await Promise.all(
+      chunk.map((batch) => fetchBatch(batch, from, githubToken)),
+    );
+    for (const users of results) {
+      allUsers.push(...users);
+    }
     console.log(
-      `[github] batch ${Math.floor(i / BATCH_SIZE) + 1} : ${users.length}/${batch.length} enrichis | total: ${allUsers.length}`,
+      `[github] paquet ${Math.floor(i / CONCURRENCY) + 1} : ${allUsers.length} / ${rankedLogins.length} enrichis`,
     );
   }
 
