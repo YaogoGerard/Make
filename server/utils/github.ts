@@ -2,7 +2,8 @@ import https from "node:https";
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 50;
+const BATCH_DELAY = 300;
 
 const STUDENT_KEYWORDS = [
   "étudiant",
@@ -83,6 +84,12 @@ function cleanName(raw: string | null, login: string): string {
   return raw.trim();
 }
 
+function delay(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+let fetchPromise: Promise<Contributor[]> | null = null;
+
 function httpsGet(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const parsed = new URL(url);
@@ -145,45 +152,56 @@ async function fetchBatch(
 }
 
 export async function fetchGithubContributors(): Promise<Contributor[]> {
-  const { githubToken } = useRuntimeConfig();
-  const from = `${YEAR}-01-01T00:00:00Z`;
+  if (fetchPromise) return fetchPromise;
 
-  // étape 1 : liste des logins depuis committers.top
-  const rankedLogins = await fetchRankedLogins();
+  fetchPromise = (async () => {
+    try {
+      const { githubToken } = useRuntimeConfig();
+      const from = `${YEAR}-01-01T00:00:00Z`;
 
-  // étape 2 : enrichissement par batch de 10 via GitHub GraphQL
-  const allUsers: GithubUser[] = [];
+      // étape 1 : liste des logins depuis committers.top
+      const rankedLogins = await fetchRankedLogins();
 
-  for (let i = 0; i < rankedLogins.length; i += BATCH_SIZE) {
-    const batch = rankedLogins.slice(i, i + BATCH_SIZE);
-    const users = await fetchBatch(batch, from, githubToken);
-    allUsers.push(...users);
-    console.log(
-      `[github] batch ${Math.floor(i / BATCH_SIZE) + 1} : ${users.length}/${batch.length} enrichis | total: ${allUsers.length}`,
-    );
-  }
+      // étape 2 : enrichissement par batch via GitHub GraphQL
+      const allUsers: GithubUser[] = [];
 
-  // étape 3 : tri par commits uniquement (meilleur indicateur open source)
-  allUsers.sort((a, b) => {
-    const aC =
-      a.contributionsCollection?.totalCommitContributions ?? 0;
-    const bC =
-      b.contributionsCollection?.totalCommitContributions ?? 0;
-    return bC - aC;
-  });
+      for (let i = 0; i < rankedLogins.length; i += BATCH_SIZE) {
+        if (i > 0) await delay(BATCH_DELAY);
+        const batch = rankedLogins.slice(i, i + BATCH_SIZE);
+        const users = await fetchBatch(batch, from, githubToken);
+        allUsers.push(...users);
+        console.log(
+          `[github] batch ${Math.floor(i / BATCH_SIZE) + 1} : ${users.length}/${batch.length} enrichis | total: ${allUsers.length}`,
+        );
+      }
 
-  console.log(`[github] classement final : ${allUsers.length} contributeurs`);
+      // étape 3 : tri par commits uniquement (meilleur indicateur open source)
+      allUsers.sort((a, b) => {
+        const aC =
+          a.contributionsCollection?.totalCommitContributions ?? 0;
+        const bC =
+          b.contributionsCollection?.totalCommitContributions ?? 0;
+        return bC - aC;
+      });
 
-  return allUsers.map((user, index) => ({
-    rank: index + 1,
-    name: cleanName(user.name, user.login),
-    pseudo: `@${user.login}`,
-    status: isStudent(user.bio, user.company) ? "étudiant" : "contributeur",
-    contributions:
-      user.contributionsCollection?.contributionCalendar?.totalContributions ??
-      0,
-    repos: user.repositories?.totalCount ?? 0,
-    stars: totalStars(user.repositories?.nodes ?? []),
-    avatar: user.avatarUrl,
-  }));
+      console.log(`[github] classement final : ${allUsers.length} contributeurs`);
+
+      return allUsers.map((user, index) => ({
+        rank: index + 1,
+        name: cleanName(user.name, user.login),
+        pseudo: `@${user.login}`,
+        status: isStudent(user.bio, user.company) ? "étudiant" : "contributeur",
+        contributions:
+          user.contributionsCollection?.contributionCalendar?.totalContributions ??
+          0,
+        repos: user.repositories?.totalCount ?? 0,
+        stars: totalStars(user.repositories?.nodes ?? []),
+        avatar: user.avatarUrl,
+      }));
+    } finally {
+      fetchPromise = null;
+    }
+  })();
+
+  return fetchPromise;
 }
