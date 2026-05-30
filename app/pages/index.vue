@@ -78,9 +78,8 @@ const searchQuery = ref('')
 const visibleCount = ref(10)
 
 // ─── DONNÉES API GITHUB ───
-const { data: apiData } = await useFetch(
-  import.meta.prerender ? '/data/contributors.json' : '/api/contributors'
-)
+const dataUrl = import.meta.prerender ? '/data/contributors.json' : '/api/contributors'
+const { data: apiData } = await useFetch(dataUrl, { server: false })
 const allContributors = computed(() => apiData.value ?? [])
 
 
