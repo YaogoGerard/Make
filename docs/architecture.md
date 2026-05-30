@@ -71,3 +71,7 @@ C4Container
 - Token GitHub injecté via secrets, jamais exposé au client
 - Aucune donnée stockée (lecture seule)
 - TLS 1.3 via GitHub Pages
+
+## Références
+
+- [SWE Basics Before Code](https://github.com/MatrixCollab/SWE-BASICS-BEFORE-CODE) — Méthodologie complète (Waterfall, IEEE 830, C4 Model, UML) qui a inspiré la structure de cette documentation.
