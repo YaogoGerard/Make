@@ -85,7 +85,8 @@ function cleanName(raw: string | null, login: string): string {
 
 function httpsGet(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    const parsed = new URL(url);
+    https.get({ hostname: parsed.hostname, path: parsed.pathname, family: 4 }, (res) => {
       let data = "";
       res.on("data", (chunk) => (data += chunk));
       res.on("end", () => resolve(data));
