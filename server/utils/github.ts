@@ -1,145 +1,176 @@
-const GITHUB_GRAPHQL = 'https://api.github.com/graphql'
-const MAX_PAGES = 5
+const GITHUB_GRAPHQL = "https://api.github.com/graphql";
+const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
+const BATCH_SIZE = 10;
 
 const STUDENT_KEYWORDS = [
-  'étudiant', 'étudiante', 'etudiant', 'etudiante', 'student'
-]
+  "étudiant",
+  "étudiante",
+  "etudiant",
+  "etudiante",
+  "student",
+];
 
 interface GithubUser {
-  login: string
-  name: string | null
-  avatarUrl: string
-  bio: string | null
-  company: string | null
-  followers: { totalCount: number }
+  login: string;
+  name: string | null;
+  avatarUrl: string;
+  bio: string | null;
+  company: string | null;
+  followers: { totalCount: number };
   repositories?: {
-    totalCount: number
-    nodes: { stargazerCount: number }[]
-  }
+    totalCount: number;
+    nodes: { stargazerCount: number }[];
+  };
   contributionsCollection: {
-    contributionCalendar: { totalContributions: number }
-    totalCommitContributions: number
-  }
-}
-
-interface PageInfo {
-  hasNextPage: boolean
-  endCursor: string | null
-}
-
-interface SearchResult {
-  edges: { node: GithubUser }[]
-  pageInfo: PageInfo
-}
-
-const YEAR = new Date().getFullYear()
-
-function buildQuery(from: string): string {
-  return `
-query($after: String) {
-  search(type: USER, query: "location:Burkina Faso repos:>=1 followers:>=1", first: 100, after: $after) {
-    pageInfo { hasNextPage endCursor }
-    edges {
-      node {
-        ... on User {
-          login
-          name
-          avatarUrl
-          bio
-          company
-          followers { totalCount }
-          repositories(first: 100, orderBy: {field: STARGAZERS, direction: DESC}) {
-            totalCount
-            nodes { stargazerCount }
-          }
-          contributionsCollection(from: "${from}") {
-            contributionCalendar { totalContributions }
-            totalCommitContributions
-          }
-        }
-      }
-    }
-  }
-}
-`}
-
-function isStudent(bio: string | null, company: string | null): boolean {
-  const text = `${bio ?? ''} ${company ?? ''}`.toLowerCase()
-  return STUDENT_KEYWORDS.some(k => text.includes(k))
-}
-
-function totalStars(repos: { stargazerCount: number }[]): number {
-  return repos.reduce((sum, r) => sum + r.stargazerCount, 0)
-}
-
-function cleanName(raw: string | null, login: string): string {
-  if (!raw) return login
-  return raw.trim()
+    contributionCalendar: { totalContributions: number };
+    totalCommitContributions: number;
+  };
 }
 
 export interface Contributor {
-  rank: number
-  name: string
-  pseudo: string
-  status: 'contributeur' | 'étudiant'
-  contributions: number
-  repos: number
-  stars: number
-  avatar: string
+  rank: number;
+  name: string;
+  pseudo: string;
+  status: "contributeur" | "étudiant";
+  contributions: number;
+  repos: number;
+  stars: number;
+  avatar: string;
 }
 
-async function fetchPage(from: string, after: string | null, token: string): Promise<SearchResult> {
-  const res = await fetch(GITHUB_GRAPHQL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: buildQuery(from),
-      variables: { after },
-    }),
-  })
+const YEAR = new Date().getFullYear();
 
-  const json = await res.json()
+function buildBatchQuery(logins: string[], from: string): string {
+  const aliases = logins
+    .map(
+      (login, i) => `
+    u${i}: user(login: "${login}") {
+      login
+      name
+      avatarUrl
+      bio
+      company
+      followers { totalCount }
+      repositories(first: 10, orderBy: {field: STARGAZERS, direction: DESC}) {
+        totalCount
+        nodes { stargazerCount }
+      }
+      contributionsCollection(from: "${from}") {
+        contributionCalendar { totalContributions }
+        totalCommitContributions
+      }
+    }
+  `,
+    )
+    .join("\n");
 
-  if (json.errors) {
-    throw new Error(`GitHub API error: ${JSON.stringify(json.errors)}`)
+  return `query { ${aliases} }`;
+}
+
+function isStudent(bio: string | null, company: string | null): boolean {
+  const text = `${bio ?? ""} ${company ?? ""}`.toLowerCase();
+  return STUDENT_KEYWORDS.some((k) => text.includes(k));
+}
+
+function totalStars(repos: { stargazerCount: number }[]): number {
+  return repos.reduce((sum, r) => sum + r.stargazerCount, 0);
+}
+
+function cleanName(raw: string | null, login: string): string {
+  if (!raw) return login;
+  return raw.trim();
+}
+
+async function fetchRankedLogins(): Promise<string[]> {
+  try {
+    const res = await fetch(COMMITTERS_TOP_URL);
+    const json = await res.json();
+    const logins: string[] = json.user ?? [];
+    console.log(
+      `[github] ${logins.length} logins récupérés depuis committers.top`,
+    );
+    return logins;
+  } catch (err) {
+    throw new Error(`Impossible de contacter committers.top : ${err}`);
+  }
+}
+
+async function fetchBatch(
+  logins: string[],
+  from: string,
+  token: string,
+): Promise<GithubUser[]> {
+  let res: Response;
+  try {
+    res = await fetch(GITHUB_GRAPHQL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query: buildBatchQuery(logins, from) }),
+    });
+  } catch (err) {
+    throw new Error(`Réseau inaccessible : ${err}`);
   }
 
-  return json.data.search as SearchResult
+  const json = await res.json();
+
+  if (!json.data) {
+    throw new Error(`Réponse GitHub vide : ${JSON.stringify(json)}`);
+  }
+
+  return logins
+    .map((_, i) => json.data[`u${i}`] as GithubUser | null)
+    .filter(
+      (u): u is GithubUser =>
+        !!u &&
+        !!u.login &&
+        !!u.contributionsCollection &&
+        !!u.contributionsCollection.contributionCalendar,
+    );
 }
 
 export async function fetchGithubContributors(): Promise<Contributor[]> {
-  const { githubToken } = useRuntimeConfig()
-  const from = `${YEAR}-01-01T00:00:00Z`
+  const { githubToken } = useRuntimeConfig();
+  const from = `${YEAR}-01-01T00:00:00Z`;
 
-  let after: string | null = null
-  const allUsers: GithubUser[] = []
+  // étape 1 : liste des logins depuis committers.top
+  const rankedLogins = await fetchRankedLogins();
 
-  for (let i = 0; i < MAX_PAGES; i++) {
-    const result = await fetchPage(from, after, githubToken)
-    const users = result.edges.map(e => e.node)
-    allUsers.push(...users)
+  // étape 2 : enrichissement par batch de 10 via GitHub GraphQL
+  const allUsers: GithubUser[] = [];
 
-    if (!result.pageInfo.hasNextPage || !result.pageInfo.endCursor) break
-    after = result.pageInfo.endCursor
+  for (let i = 0; i < rankedLogins.length; i += BATCH_SIZE) {
+    const batch = rankedLogins.slice(i, i + BATCH_SIZE);
+    const users = await fetchBatch(batch, from, githubToken);
+    allUsers.push(...users);
+    console.log(
+      `[github] batch ${Math.floor(i / BATCH_SIZE) + 1} : ${users.length}/${batch.length} enrichis | total: ${allUsers.length}`,
+    );
   }
 
+  // étape 3 : tri par contributions GitHub en temps réel (pas par classement committers.top)
   allUsers.sort((a, b) => {
-    const aContribs = a.contributionsCollection?.contributionCalendar?.totalContributions ?? 0
-    const bContribs = b.contributionsCollection?.contributionCalendar?.totalContributions ?? 0
-    return bContribs - aContribs
-  })
+    const aC =
+      a.contributionsCollection?.contributionCalendar?.totalContributions ?? 0;
+    const bC =
+      b.contributionsCollection?.contributionCalendar?.totalContributions ?? 0;
+    return bC - aC;
+  });
+
+  console.log(`[github] classement final : ${allUsers.length} contributeurs`);
 
   return allUsers.map((user, index) => ({
     rank: index + 1,
     name: cleanName(user.name, user.login),
     pseudo: `@${user.login}`,
-    status: isStudent(user.bio, user.company) ? 'étudiant' : 'contributeur',
-    contributions: user.contributionsCollection?.contributionCalendar?.totalContributions ?? 0,
+    status: isStudent(user.bio, user.company) ? "étudiant" : "contributeur",
+    contributions:
+      user.contributionsCollection?.contributionCalendar?.totalContributions ??
+      0,
     repos: user.repositories?.totalCount ?? 0,
     stars: totalStars(user.repositories?.nodes ?? []),
     avatar: user.avatarUrl,
-  }))
+  }));
 }
