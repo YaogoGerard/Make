@@ -25,7 +25,7 @@
       <!-- LIEN GitHub -->
       <span class="rounded-full bg-white/60 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-200/50 dark:bg-gray-800/20 dark:border-gray-700 px-4 py-2">
         <a
-          href="https://github.com/YaogoGerard"
+          href="https://github.com/YaogoGerard/Make"
           target="_blank"
           rel="noopener noreferrer"
           class="flex items-center gap-1.5 text-sm text-gray-600 transition hover:text-gray-900 dark:text-white/70 dark:hover:text-white"
