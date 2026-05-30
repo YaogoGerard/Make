@@ -31,6 +31,12 @@
   "header": {
     "github": "GitHub"
   },
+  "info": {
+    "title": "How does the ranking work?",
+    "criteria": "The ranking is based on the total number of GitHub contributions (commits + pull requests + code reviews) for the current year. Only public contributions are counted.",
+    "source": "Data sourced from",
+    "student_howto": "To appear with the student badge (green), add \"student\", \"étudiant\" or \"étudiante\" to your GitHub bio or company field."
+  },
   "footer": {
     "project": "Maké — Open Source Project (MIT License)",
     "data_via": "Data via",

@@ -35,6 +35,10 @@
     <div class="mt-8 flex justify-center">
       <SearchBar v-model="searchQuery" />
     </div>
+    <!-- BANNIÈRE D'INFO DÉROULANTE -->
+    <div class="mt-4 flex justify-center">
+      <InfoBanner />
+    </div>
     <!-- STATISTIQUES (nombre de contributeurs + commits) -->
     <p class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
       <span class="font-medium text-orange-500">{{ filteredList.length }}</span> {{ $t('stats.contributors') }} •
