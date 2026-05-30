@@ -2,6 +2,11 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   app: {
     baseURL: '/Make/',
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/Make/favicon.ico' }
+      ],
+    },
   },
   devtools: { enabled: true },
   modules: [
