@@ -12,7 +12,7 @@
         <span class="rounded-full bg-white/60 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-200/50 dark:bg-gray-800/20 dark:border-gray-700 px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
           {{ $t('footer.data_via') }}
           <a
-            href="https://docs.github.com/en/rest"
+            href="https://docs.github.com/en/graphql"
             target="_blank"
             rel="noopener noreferrer"
             class="font-medium text-gray-800 underline underline-offset-2 transition hover:text-gray-900 dark:text-gray-200 dark:hover:text-white"
