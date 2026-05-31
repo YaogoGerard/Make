@@ -41,8 +41,6 @@ export interface Contributor {
   avatar: string;
 }
 
-const YEAR = new Date().getFullYear();
-
 function buildBatchQuery(logins: string[], from: string): string {
   const aliases = logins
     .map(
@@ -161,7 +159,7 @@ export async function fetchGithubContributors(): Promise<Contributor[]> {
   fetchPromise = (async () => {
     try {
       const { githubToken } = useRuntimeConfig();
-      const from = `${YEAR}-01-01T00:00:00Z`;
+      const from = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
 
       // étape 1 : liste des logins depuis committers.top
       const rankedLogins = await fetchRankedLogins();
