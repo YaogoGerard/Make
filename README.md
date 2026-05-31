@@ -50,7 +50,7 @@ npm run preview
 ## Configuration
 
 - `nuxt.config.ts` — Base URL `/Make/`, favicon, modules, i18n
-- `server/utils/github.ts` — Logique de fetch GitHub (GraphQL, rate-limit retry, pagination)
+- `server/utils/github.ts` — Logique de fetch GitHub (GraphQL, rate-limit retry, pagination).
 - `server/api/contributors.get.ts` — Endpoint API avec cache 24h
 - `.github/workflows/deploy.yml` — Déploiement automatique
 - `i18n/locales/` — Fichiers de traduction (fr/en)
