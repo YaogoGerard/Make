@@ -5,13 +5,7 @@ const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
 const BATCH_SIZE = 10;
 const BATCH_DELAY = 1000;
 
-const STUDENT_KEYWORDS = [
-  "étudiant",
-  "étudiante",
-  "etudiant",
-  "etudiante",
-  "student",
-];
+const STUDENT_KEYWORDS = ["étudiant","étudiante","etudiant","etudiante","student",];
 
 interface GithubUser {
   login: string;

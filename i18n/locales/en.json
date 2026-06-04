@@ -33,7 +33,7 @@
   },
   "info": {
     "title": "How does the ranking work?",
-    "criteria": "The ranking is based on the total number of GitHub contributions (commits + pull requests + code reviews) for the current year. Only public contributions are counted.",
+    "criteria": "The ranking is based on the total number of GitHub contributions (commits + pull requests + code reviews) for the last six months. Only public contributions are counted.",
     "source": "Data sourced from",
     "source_updated": ", updated every 24h.",
     "student_howto": "To appear with the student badge (green), add \"student\", \"étudiant\" or \"étudiante\" to your GitHub bio."
