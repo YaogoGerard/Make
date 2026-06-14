@@ -2,6 +2,11 @@
 
 ![app/assets/images/logo1.png](app/assets/images/logo1.png)
 
+[![Deploy](https://github.com/YaogoGerard/Make/actions/workflows/deploy.yml/badge.svg)](https://github.com/YaogoGerard/Make/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](https://www.typescriptlang.org/)
+[![Nuxt](https://img.shields.io/badge/Nuxt-00DC82?logo=nuxt&logoColor=fff)](https://nuxt.com/)
+
 > Classement des meilleurs contributeurs GitHub du Burkina Faso.
 
 Maké est un site statique généré avec **Nuxt 4** qui affiche un classement des développeurs et étudiants burkinabè les plus actifs sur GitHub, basé sur leurs contributions publiques (commits, pull requests, code reviews) de l'année en cours.
