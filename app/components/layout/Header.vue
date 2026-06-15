@@ -1,13 +1,13 @@
 <template>
   <!-- ═══ HEADER FIXE AVEC PILLULES EN VERRE ═══ -->
-  <header class="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-4 py-3 sm:px-8">
+  <header class="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-4 py-3 sm:px-8 pointer-events-none">
     <!-- LOGO -->
-    <NuxtLink :to="localePath('/')" class="shrink-0 rounded-full bg-white/60 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-200/50 dark:bg-gray-800/20 dark:border-gray-700 p-2">
+    <NuxtLink :to="localePath('/')" class="shrink-0 pointer-events-auto rounded-full bg-white/60 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-200/50 dark:bg-gray-800/20 dark:border-gray-700 p-2">
       <img class="h-8 w-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] dark:drop-shadow-none" src="~/assets/images/logo1.png" alt="Maké logo">
     </NuxtLink>
 
     <!-- NAVIGATION DESKTOP (FR / EN / GitHub / Thème) -->
-    <nav class="hidden items-center gap-3 md:flex">
+    <nav class="pointer-events-auto hidden items-center gap-3 md:flex">
       <!-- BOUTON FR -->
       <span class="rounded-full bg-white/60 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-200/50 dark:bg-gray-800/20 dark:border-gray-700 px-4 py-2">
         <NuxtLink :to="switchLocalePath('fr')" class="relative text-sm transition hover:text-gray-900 dark:text-white/70 dark:hover:text-white" :class="locale === 'fr' ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600'">
@@ -46,7 +46,7 @@
     </nav>
 
     <!-- ZONE MOBILE : Thème + Hamburger (visibles que sur mobile) -->
-    <div class="flex items-center gap-2 md:hidden">
+    <div class="pointer-events-auto flex items-center gap-2 md:hidden">
       <!-- BASCULE THÈME (Mobile, en dehors du menu hamburger) -->
       <span class="rounded-full bg-white/60 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-200/50 dark:bg-gray-800/20 dark:border-gray-700 px-3 py-2">
         <button
@@ -73,7 +73,7 @@
     <!-- MENU MOBILE DÉROULANT (FR / EN / GitHub) -->
     <div
       v-if="menuOpen"
-      class="absolute inset-x-0 top-full mt-3"
+      class="pointer-events-auto absolute inset-x-0 top-full mt-3"
     >
       <ul class="flex flex-col items-center gap-3">
         <li class="rounded-full bg-white/60 bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-200/50 dark:bg-gray-800/20 dark:border-gray-700 px-6 py-3">
