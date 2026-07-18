@@ -67,8 +67,8 @@ function isStudent(bio: string | null, company: string | null): boolean {
   return STUDENT_KEYWORDS.some((k) => text.includes(k));
 }
 
-function totalStars(repos: { stargazerCount: number }[]): number {
-  return repos.reduce((sum, r) => sum + r.stargazerCount, 0);
+function totalStars(repos: ({ stargazerCount: number } | null)[]): number {
+  return repos.reduce((sum, r) => sum + (r?.stargazerCount ?? 0), 0);
 }
 
 function cleanName(raw: string | null, login: string): string {
