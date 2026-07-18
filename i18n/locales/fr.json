@@ -21,8 +21,7 @@
     "student": "étudiant",
     "contributor": "contributeur",
     "contributions": "contributions",
-    "repos": "repos",
-    "stars": "étoiles"
+    "repos": "repos"
   },
   "pagination": {
     "see_more": "Voir plus",
@@ -33,7 +32,7 @@
   },
   "info": {
     "title": "Comment fonctionne le classement ?",
-    "criteria": "Le classement est basé sur le nombre total de contributions GitHub (commits + pull requests + reviews de code) des six derniers mois. Seules les contributions publiques sont comptabilisées.",
+    "criteria": "Le classement est basé sur le nombre total de contributions GitHub (commits + pull requests + reviews de code) des douze derniers mois. Seules les contributions publiques sont comptabilisées.",
     "source": "Les données proviennent de",
     "source_updated": ", mais sont mises à jour toutes les 24h.",
     "student_howto": "Pour apparaître avec le badge étudiant (vert), ajoutez « étudiant », « étudiante » ou « student » dans votre bio GitHub."

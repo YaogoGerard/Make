@@ -2,8 +2,8 @@
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
-const BATCH_SIZE = 1;
-const BATCH_DELAY = 200;
+const BATCH_SIZE = 10;
+const BATCH_DELAY = 1000;
 
 const STUDENT_KEYWORDS = ["étudiant","étudiante","etudiant","etudiante","student",];
 
@@ -16,7 +16,6 @@ interface GithubUser {
   followers: { totalCount: number };
   repositories?: {
     totalCount: number;
-    nodes: { stargazerCount: number }[];
   };
   contributionsCollection: {
     contributionCalendar: { totalContributions: number };
@@ -30,7 +29,6 @@ export interface Contributor {
   status: "contributeur" | "étudiant";
   contributions: number;
   repos: number;
-  stars: number;
   avatar: string;
 }
 
@@ -45,10 +43,7 @@ function buildBatchQuery(logins: string[], from: string): string {
       bio
       company
       followers { totalCount }
-      repositories(first: 1, orderBy: {field: STARGAZERS, direction: DESC}) {
-        totalCount
-        nodes { stargazerCount }
-      }
+      repositories { totalCount }
       contributionsCollection(from: "${from}") {
         contributionCalendar { totalContributions }
       }
@@ -63,10 +58,6 @@ function buildBatchQuery(logins: string[], from: string): string {
 function isStudent(bio: string | null, company: string | null): boolean {
   const text = `${bio ?? ""} ${company ?? ""}`.toLowerCase();
   return STUDENT_KEYWORDS.some((k) => text.includes(k));
-}
-
-function totalStars(repos: ({ stargazerCount: number } | null)[]): number {
-  return repos.reduce((sum, r) => sum + (r?.stargazerCount ?? 0), 0);
 }
 
 function cleanName(raw: string | null, login: string): string {
@@ -151,7 +142,7 @@ export async function fetchGithubContributors(): Promise<Contributor[]> {
   fetchPromise = (async () => {
     try {
       const { githubToken } = useRuntimeConfig();
-      const from = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
+      const from = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
 
       // étape 1 : liste des logins depuis committers.top
       const rankedLogins = await fetchRankedLogins();
@@ -189,7 +180,6 @@ export async function fetchGithubContributors(): Promise<Contributor[]> {
           user.contributionsCollection?.contributionCalendar?.totalContributions ??
           0,
         repos: user.repositories?.totalCount ?? 0,
-        stars: totalStars(user.repositories?.nodes ?? []),
         avatar: user.avatarUrl,
       }));
     } finally {

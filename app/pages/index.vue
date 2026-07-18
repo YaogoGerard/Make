@@ -48,7 +48,7 @@
     <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
       <ContributorCard v-for="c in displayedList" :key="c.pseudo"
         :rank="c.rank" :name="c.name" :pseudo="c.pseudo" :status="c.status"
-        :contributions="c.contributions" :repos="c.repos" :stars="c.stars" :avatar="c.avatar"
+        :contributions="c.contributions" :repos="c.repos" :avatar="c.avatar"
       />
     </div>
     <!-- BOUTONS VOIR PLUS / VOIR MOINS -->

@@ -39,8 +39,8 @@
         </span>
       </div>
     </div>
-    <!-- STATISTIQUES (commits / repos / étoiles) -->
-    <div class="mt-4 grid grid-cols-3 gap-2 border-t border-gray-100 pt-4 dark:border-gray-800">
+    <!-- STATISTIQUES (commits / repos) -->
+    <div class="mt-4 grid grid-cols-2 gap-2 border-t border-gray-100 pt-4 dark:border-gray-800">
       <div class="text-center">
         <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ formatNumber(contributions) }}</p>
         <p class="text-xs text-gray-500 dark:text-gray-400">{{ $t('card.contributions') }}</p>
@@ -48,10 +48,6 @@
       <div class="text-center">
         <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ repos }}</p>
         <p class="text-xs text-gray-500 dark:text-gray-400">{{ $t('card.repos') }}</p>
-      </div>
-      <div class="text-center">
-        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ formatNumber(stars) }}</p>
-        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $t('card.stars') }}</p>
       </div>
     </div>
   </a>
@@ -65,7 +61,6 @@ const props = defineProps<{
   status: 'contributeur' | 'étudiant'
   contributions: number
   repos: number
-  stars: number
   avatar?: string
 }>()
 
