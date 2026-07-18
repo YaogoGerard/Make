@@ -2,8 +2,8 @@
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const COMMITTERS_TOP_URL = "https://committers.top/rank_only/burkina_faso.json";
-const BATCH_SIZE = 10;
-const BATCH_DELAY = 1000;
+const BATCH_SIZE = 1;
+const BATCH_DELAY = 200;
 
 const STUDENT_KEYWORDS = ["étudiant","étudiante","etudiant","etudiante","student",];
 
@@ -20,7 +20,6 @@ interface GithubUser {
   };
   contributionsCollection: {
     contributionCalendar: { totalContributions: number };
-    totalCommitContributions: number;
   };
 }
 
@@ -46,13 +45,12 @@ function buildBatchQuery(logins: string[], from: string): string {
       bio
       company
       followers { totalCount }
-      repositories(first: 10, orderBy: {field: STARGAZERS, direction: DESC}) {
+      repositories(first: 1, orderBy: {field: STARGAZERS, direction: DESC}) {
         totalCount
         nodes { stargazerCount }
       }
       contributionsCollection(from: "${from}") {
         contributionCalendar { totalContributions }
-        totalCommitContributions
       }
     }
   `,
@@ -153,7 +151,7 @@ export async function fetchGithubContributors(): Promise<Contributor[]> {
   fetchPromise = (async () => {
     try {
       const { githubToken } = useRuntimeConfig();
-      const from = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
+      const from = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
 
       // étape 1 : liste des logins depuis committers.top
       const rankedLogins = await fetchRankedLogins();
